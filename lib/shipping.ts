@@ -19,6 +19,13 @@ export type Shipment = {
   trackingCode: string;
   estimatedDelivery: string | null;
   updatedAt: string;
+  courierId: string | null;
+};
+
+export type Courier = {
+  id: string;
+  name: string;
+  email: string;
 };
 
 type ShipmentsResponse = {
@@ -28,6 +35,12 @@ type ShipmentsResponse = {
   total: number;
   totalPages: number;
 };
+
+export const NON_REASSIGNABLE_STATUSES: ShipmentStatus[] = [
+  "IN_TRANSIT",
+  "DELIVERED",
+  "CANCELED",
+];
 
 export const STATUS_ORDER: ShipmentStatus[] = [
   "PENDING",
@@ -47,7 +60,6 @@ export const STATUS_LABELS: Record<ShipmentStatus, string> = {
   CANCELED: "Cancelado",
 };
 
-// Puntito de color del badge (clases de Tailwind)
 export const STATUS_DOT: Record<ShipmentStatus, string> = {
   PENDING: "bg-slate-400",
   PREPARING: "bg-amber-500",
@@ -76,7 +88,19 @@ export async function fetchAllShipments(): Promise<Shipment[]> {
     all.push(...next.data);
   }
 
-  // Dedup defensivo por id
   const unique = new Map(all.map((s) => [s.id, s]));
   return Array.from(unique.values());
+}
+
+export async function fetchCouriers(): Promise<Courier[]> {
+  try {
+    const res = await fetch(`${SHIPPING_API_URL}/api/couriers`, {
+      cache: "no-store",
+    });
+    if (!res.ok) return [];
+    const json = await res.json();
+    return json.data ?? [];
+  } catch {
+    return [];
+  }
 }
