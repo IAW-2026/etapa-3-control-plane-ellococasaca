@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Sidebar } from "@/components/Sidebar";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -24,15 +25,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <div className="flex h-screen overflow-hidden bg-slate-50">
-          <Sidebar />
-          <main className="flex-1 overflow-y-auto">{children}</main>
-        </div>
-      </body>
-    </html>
+    <ClerkProvider>
+      <html lang="es">
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
+          <div className="flex h-screen overflow-hidden bg-slate-50">
+            <Sidebar />
+            <main className="flex-1 overflow-y-auto">{children}</main>
+          </div>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
