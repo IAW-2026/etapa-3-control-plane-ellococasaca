@@ -1,5 +1,4 @@
-export const BUYER_APP_URL =
-  process.env.BUYER_APP_URL ?? "";
+export const BUYER_APP_URL = process.env.BUYER_APP_URL!;
 
 export type OrderStatus = "PENDING" | "PAID" | "REJECTED";
 

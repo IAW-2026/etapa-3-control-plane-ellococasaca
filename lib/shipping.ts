@@ -1,6 +1,4 @@
-export const SHIPPING_API_URL =
-  process.env.SHIPPING_API_URL ??
-  "https://proyecto-c-shipping2-ellococasaca.vercel.app";
+export const SHIPPING_API_URL = process.env.SHIPPING_API_URL!;
 
 export type ShipmentStatus =
   | "PENDING"
