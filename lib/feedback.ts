@@ -1,4 +1,6 @@
-export const FEEDBACK_APP_URL = process.env.FEEDBACK_APP_URL!;
+export function feedbackApiUrl(baseUrl: string, path: string) {
+  return `${baseUrl}${path}`;
+}
 
 export type ReviewStatus = "PUBLISHED" | "HIDDEN" | "PENDING" | "DELETED";
 export type ReportStatus = "OPEN" | "RESOLVED" | "DISMISSED";
@@ -68,9 +70,10 @@ export const REPORT_STATUS_LABELS: Record<ReportStatus, string> = {
 };
 
 export async function fetchFeedbackAnalytics(
-  token: string
+  token: string,
+  feedbackAppUrl: string
 ): Promise<FeedbackAnalytics> {
-  const res = await fetch(`${FEEDBACK_APP_URL}/api/analytics`, {
+  const res = await fetch(feedbackApiUrl(feedbackAppUrl, "/api/analytics"), {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });

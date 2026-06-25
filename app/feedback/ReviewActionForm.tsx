@@ -3,7 +3,7 @@
 import { useAuth } from "@clerk/nextjs";
 import { useState, useTransition } from "react";
 import {
-  FEEDBACK_APP_URL,
+  feedbackApiUrl,
   MODERABLE_STATUSES,
   REVIEW_STATUS_LABELS,
 } from "@/lib/feedback";
@@ -16,7 +16,11 @@ const ACTION_LABELS: Record<ActionType, string> = {
   DELETE: "Eliminar (soft)",
 };
 
-export default function ReviewActionForm() {
+export default function ReviewActionForm({
+  feedbackAppUrl,
+}: {
+  feedbackAppUrl: string;
+}) {
   const { getToken } = useAuth();
   const [reviewId, setReviewId] = useState("");
   const [action, setAction] = useState<ActionType>("HIDDEN");
@@ -41,12 +45,15 @@ export default function ReviewActionForm() {
         let res: Response;
         if (action === "DELETE") {
           res = await fetch(
-            `${FEEDBACK_APP_URL}/api/reviews/${reviewId.trim()}`,
+            feedbackApiUrl(feedbackAppUrl, `/api/reviews/${reviewId.trim()}`),
             { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
           );
         } else {
           res = await fetch(
-            `${FEEDBACK_APP_URL}/api/reviews/${reviewId.trim()}/moderate`,
+            feedbackApiUrl(
+              feedbackAppUrl,
+              `/api/reviews/${reviewId.trim()}/moderate`
+            ),
             {
               method: "PATCH",
               headers: {

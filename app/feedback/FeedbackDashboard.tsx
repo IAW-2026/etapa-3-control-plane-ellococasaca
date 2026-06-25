@@ -25,7 +25,11 @@ function StarRating({ rating }: { rating: number }) {
   );
 }
 
-export default function FeedbackDashboard() {
+export default function FeedbackDashboard({
+  feedbackAppUrl,
+}: {
+  feedbackAppUrl: string;
+}) {
   const { getToken } = useAuth();
   const [analytics, setAnalytics] = useState<FeedbackAnalytics | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -39,7 +43,7 @@ export default function FeedbackDashboard() {
           setError("Sin sesión activa.");
           return;
         }
-        const data = await fetchFeedbackAnalytics(token);
+        const data = await fetchFeedbackAnalytics(token, feedbackAppUrl);
         setAnalytics(data);
       } catch (e) {
         setError(
@@ -50,7 +54,7 @@ export default function FeedbackDashboard() {
       }
     }
     load();
-  }, [getToken]);
+  }, [feedbackAppUrl, getToken]);
 
   return (
     <div className="max-w-6xl mx-auto px-8 py-6 space-y-8">
@@ -71,12 +75,20 @@ export default function FeedbackDashboard() {
         </div>
       )}
 
-      {analytics && <DashboardContent analytics={analytics} />}
+      {analytics && (
+        <DashboardContent analytics={analytics} feedbackAppUrl={feedbackAppUrl} />
+      )}
     </div>
   );
 }
 
-function DashboardContent({ analytics }: { analytics: FeedbackAnalytics }) {
+function DashboardContent({
+  analytics,
+  feedbackAppUrl,
+}: {
+  analytics: FeedbackAnalytics;
+  feedbackAppUrl: string;
+}) {
   const { reviews, reports, eligibilities, topSellers, topProducts } = analytics;
 
   return (
@@ -293,7 +305,7 @@ function DashboardContent({ analytics }: { analytics: FeedbackAnalytics }) {
           </p>
         </div>
         <div className="bg-white border border-slate-200 rounded-lg px-5 py-4">
-          <ReviewActionForm />
+          <ReviewActionForm feedbackAppUrl={feedbackAppUrl} />
         </div>
       </section>
     </div>
