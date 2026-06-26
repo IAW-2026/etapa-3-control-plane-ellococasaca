@@ -32,7 +32,7 @@ export default function RootLayout({
         >
           <div className="flex h-screen overflow-hidden bg-slate-50">
             <Show when="signed-in">
-              <Sidebar dashboardUrl={process.env.DASHBOARD_ANALITICS_URL} />
+              <Sidebar />
             </Show>
             <main className="flex-1 overflow-y-auto">
               <Show when="signed-in">
