@@ -1,53 +1,17 @@
-export function feedbackApiUrl(baseUrl: string, path: string) {
-  return `${baseUrl}${path}`;
-}
-
 export type ReviewStatus = "PUBLISHED" | "HIDDEN" | "PENDING" | "DELETED";
-export type ReportStatus = "OPEN" | "RESOLVED" | "DISMISSED";
 
-export type RatingsCacheEntry = {
-  targetId: string;
-  avgRating: number;
-  totalRatings?: number;
+export type AdminReview = {
+  id: string;
+  buyerId: string;
+  sellerId: string;
+  productId: string;
+  orderId: string;
+  ratingProduct: number;
+  comment: string;
+  status: ReviewStatus;
+  isModerated: boolean;
+  createdAt: string;
 };
-
-export type FeedbackAnalytics = {
-  reviews: {
-    total: number;
-    byStatus: Partial<Record<ReviewStatus, number>>;
-    moderated: number;
-    last7Days: number;
-    last30Days: number;
-    avgProductRating: number;
-    ratingDistribution: Record<string, number>;
-    dailySeries: Array<{ date: string; count: number }>;
-  };
-  reports: {
-    total: number;
-    byStatus: Partial<Record<ReportStatus, number>>;
-    last7Days: number;
-    last30Days: number;
-  };
-  eligibilities: {
-    totalEnabled: number;
-    consumed: number;
-    pending: number;
-  };
-  topSellers: RatingsCacheEntry[];
-  topProducts: RatingsCacheEntry[];
-};
-
-export const REVIEW_STATUSES: ReviewStatus[] = [
-  "PUBLISHED",
-  "HIDDEN",
-  "PENDING",
-  "DELETED",
-];
-
-export const MODERABLE_STATUSES: Array<"PUBLISHED" | "HIDDEN"> = [
-  "PUBLISHED",
-  "HIDDEN",
-];
 
 export const REVIEW_STATUS_LABELS: Record<ReviewStatus, string> = {
   PUBLISHED: "Publicada",
@@ -63,20 +27,28 @@ export const REVIEW_STATUS_DOT: Record<ReviewStatus, string> = {
   DELETED: "bg-red-500",
 };
 
-export const REPORT_STATUS_LABELS: Record<ReportStatus, string> = {
-  OPEN: "Abierto",
-  RESOLVED: "Resuelto",
-  DISMISSED: "Desestimado",
+export const REVIEW_STATUS_BADGE: Record<ReviewStatus, string> = {
+  PUBLISHED: "border-green-200 bg-green-50 text-green-700",
+  HIDDEN: "border-amber-200 bg-amber-50 text-amber-700",
+  PENDING: "border-blue-200 bg-blue-50 text-blue-700",
+  DELETED: "border-red-200 bg-red-50 text-red-700",
 };
 
-export async function fetchFeedbackAnalytics(
+export async function fetchAdminReviews(
   token: string,
-  feedbackAppUrl: string
-): Promise<FeedbackAnalytics> {
-  const res = await fetch(feedbackApiUrl(feedbackAppUrl, "/api/analytics"), {
+  skip = 0,
+  limit = 5,
+  q = ""
+): Promise<{ reviews: AdminReview[]; total: number; skip: number; take: number }> {
+  const params = new URLSearchParams({
+    limit: String(limit),
+    skip: String(skip),
+    ...(q ? { q } : {}),
+  });
+  const res = await fetch(`/api/feedback/admin/reviews?${params}`, {
     headers: { Authorization: `Bearer ${token}` },
     cache: "no-store",
   });
-  if (!res.ok) throw new Error(`Analytics respondió ${res.status}`);
+  if (!res.ok) throw new Error(`Reviews respondió ${res.status}`);
   return res.json();
 }
