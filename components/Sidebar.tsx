@@ -11,6 +11,7 @@ import {
   MessageSquare,
   Users,
   Settings,
+  BarChart2,
 } from "lucide-react";
 
 type NavItem = {
@@ -77,7 +78,7 @@ function SidebarSection({
   );
 }
 
-export function Sidebar() {
+export function Sidebar({ dashboardUrl }: { dashboardUrl?: string }) {
   const pathname = usePathname();
 
   return (
@@ -92,6 +93,18 @@ export function Sidebar() {
         <SidebarSection title="Aplicaciones" items={appItems} pathname={pathname} />
         <SidebarSection title="Sistema" items={systemItems} pathname={pathname} />
       </nav>
+
+      {dashboardUrl && (
+        <div className="px-3 py-3 border-t border-slate-800">
+          <a
+            href={dashboardUrl}
+            className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-slate-300 hover:bg-slate-800 hover:text-white transition-colors w-full"
+          >
+            <BarChart2 size={16} />
+            Dashboard Analytics
+          </a>
+        </div>
+      )}
 
       <div className="px-5 py-3 border-t border-slate-800 text-xs text-slate-500">
         v0.1
