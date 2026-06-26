@@ -1,18 +1,26 @@
+import PaymentPanel from "./PaymentPanel";
+
 export default function PaymentsPage() {
   return (
-    <div className="max-w-6xl mx-auto px-8 py-6">
-      <header className="mb-6">
+    <div className="max-w-4xl mx-auto px-8 py-6 space-y-6">
+      <header>
         <h1 className="text-2xl font-semibold text-slate-900">Payments</h1>
-        <p className="text-sm text-slate-500 mt-1">
-          Transacciones del sistema
-        </p>
+        <p className="text-sm text-slate-500 mt-1">Gestión de compras y ventas</p>
       </header>
 
-      <div className="bg-white border border-slate-200 rounded-lg p-12 text-center">
-        <p className="text-slate-500 text-sm">
-          Esta sección se va a conectar con la API de la Payments App.
-        </p>
-      </div>
+      <PaymentPanel
+        type="charge"
+        title="Compras"
+        searchLabel="Buyer ID"
+        searchPlaceholder="Ingresá el Buyer ID..."
+      />
+
+      <PaymentPanel
+        type="payout"
+        title="Ventas"
+        searchLabel="Seller ID"
+        searchPlaceholder="Ingresá el Seller ID..."
+      />
     </div>
   );
 }

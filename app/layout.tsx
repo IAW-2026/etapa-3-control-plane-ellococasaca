@@ -25,7 +25,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider>
+    <ClerkProvider afterSignOutUrl={process.env.BUYER_APP_URL}>
       <html lang="es">
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}
