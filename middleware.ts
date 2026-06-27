@@ -1,13 +1,27 @@
-import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
+import { clerkMiddleware } from "@clerk/nextjs/server";
+import { NextFetchEvent, NextRequest, NextResponse } from "next/server";
 
-const isPublicRoute = createRouteMatcher(["/sign-in(.*)"]);
+const CLERK_COOKIE_NAMES = ["__session", "__client_uat", "__clerk_db_jwt"];
 
-export default clerkMiddleware(async (auth, req) => {
-  if (!isPublicRoute(req)) {
-    const signInUrl = new URL("/sign-in", req.url).toString();
-    await auth.protect({ unauthenticatedUrl: signInUrl });
+const clerk = clerkMiddleware();
+
+export default async function middleware(req: NextRequest, event: NextFetchEvent) {
+  const hasHandshake = req.nextUrl.searchParams.has("__clerk_handshake");
+  const hasExistingSession = CLERK_COOKIE_NAMES.some((name) => req.cookies.has(name));
+
+  // When the Buyer App redirects here with a handshake token, existing Clerk
+  // cookies for this domain conflict with the new session being established.
+  // Clear them first so Clerk processes the handshake against a clean state.
+  if (hasHandshake && hasExistingSession) {
+    const response = NextResponse.redirect(req.url);
+    for (const name of CLERK_COOKIE_NAMES) {
+      response.cookies.delete(name);
+    }
+    return response;
   }
-});
+
+  return clerk(req, event);
+}
 
 export const config = {
   matcher: [
