@@ -1,4 +1,12 @@
 export const BUYER_APP_URL = process.env.BUYER_APP_URL!;
+const INTER_SERVICE_SECRET = process.env.INTER_SERVICE_SECRET;
+
+export function authHeaders(token?: string | null): Record<string, string> {
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(INTER_SERVICE_SECRET ? { "x-inter-service-secret": INTER_SERVICE_SECRET } : {}),
+  };
+}
 
 export type OrderStatus = "PENDING" | "PAID" | "REJECTED";
 
@@ -52,20 +60,29 @@ export const ORDER_STATUS_DOT: Record<OrderStatus, string> = {
 };
 
 export async function fetchAnalytics(): Promise<Analytics> {
-  const res = await fetch(`${BUYER_APP_URL}/api/analytics`, { cache: "no-store" });
+  const res = await fetch(`${BUYER_APP_URL}/api/analytics`, {
+    cache: "no-store",
+    headers: authHeaders(),
+  });
   if (!res.ok) throw new Error(`Analytics respondió ${res.status}`);
   return res.json();
 }
 
 export async function fetchBuyerUsers(): Promise<BuyerUser[]> {
-  const res = await fetch(`${BUYER_APP_URL}/api/admin/users`, { cache: "no-store" });
+  const res = await fetch(`${BUYER_APP_URL}/api/admin/users`, {
+    cache: "no-store",
+    headers: authHeaders(),
+  });
   if (!res.ok) throw new Error(`Admin users respondió ${res.status}`);
   const json = await res.json();
   return json.data;
 }
 
 export async function fetchShadowOrders(): Promise<ShadowOrder[]> {
-  const res = await fetch(`${BUYER_APP_URL}/api/admin/orders`, { cache: "no-store" });
+  const res = await fetch(`${BUYER_APP_URL}/api/admin/orders`, {
+    cache: "no-store",
+    headers: authHeaders(),
+  });
   if (!res.ok) throw new Error(`Admin orders respondió ${res.status}`);
   const json = await res.json();
   return json.data;

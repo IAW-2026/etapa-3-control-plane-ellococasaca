@@ -1,6 +1,7 @@
 import type { NextRequest } from "next/server";
 
 const FEEDBACK_APP_URL = process.env.FEEDBACK_APP_URL!;
+const INTER_SERVICE_SECRET = process.env.INTER_SERVICE_SECRET;
 
 export async function PATCH(
   request: NextRequest,
@@ -14,6 +15,7 @@ export async function PATCH(
     headers: {
       "Content-Type": "application/json",
       ...(authHeader ? { Authorization: authHeader } : {}),
+      ...(INTER_SERVICE_SECRET ? { "x-inter-service-secret": INTER_SERVICE_SECRET } : {}),
     },
     body: JSON.stringify(body),
   });
