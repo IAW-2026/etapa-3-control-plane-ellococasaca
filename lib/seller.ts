@@ -1,4 +1,5 @@
 export const SELLER_APP_URL = process.env.SELLER_APP_URL!;
+const INTER_SERVICE_SECRET = process.env.INTER_SERVICE_SECRET;
 
 export type SellerAnalytics = {
   summary: {
@@ -55,8 +56,11 @@ export type Pagination = {
   totalPages: number;
 };
 
-function authHeaders(token?: string | null): Record<string, string> {
-  return token ? { Authorization: `Bearer ${token}` } : {};
+export function authHeaders(token?: string | null): Record<string, string> {
+  return {
+    ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    ...(INTER_SERVICE_SECRET ? { "x-inter-service-secret": INTER_SERVICE_SECRET } : {}),
+  };
 }
 
 export async function fetchSellerAnalytics(token?: string | null): Promise<SellerAnalytics> {
