@@ -2,7 +2,7 @@
 
 import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
-import { SELLER_APP_URL } from "@/lib/seller";
+import { SELLER_APP_URL, authHeaders } from "@/lib/seller";
 
 export async function deleteProduct(
   productId: string
@@ -13,7 +13,7 @@ export async function deleteProduct(
 
     const res = await fetch(`${SELLER_APP_URL}/api/admin/products/${productId}`, {
       method: "DELETE",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: authHeaders(token),
     });
 
     if (!res.ok) {
@@ -40,7 +40,7 @@ export async function deleteSeller(
 
     const res = await fetch(`${SELLER_APP_URL}/api/admin/sellers/${sellerId}`, {
       method: "DELETE",
-      headers: token ? { Authorization: `Bearer ${token}` } : {},
+      headers: authHeaders(token),
     });
 
     if (!res.ok) {
