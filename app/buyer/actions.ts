@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { BUYER_APP_URL, type OrderStatus } from "@/lib/buyer";
+import { BUYER_APP_URL, authHeaders, type OrderStatus } from "@/lib/buyer";
 
 export async function updateOrderStatus(
   orderId: string,
@@ -10,7 +10,7 @@ export async function updateOrderStatus(
   try {
     const res = await fetch(`${BUYER_APP_URL}/api/admin/orders/${orderId}`, {
       method: "PATCH",
-      headers: { "Content-Type": "application/json" },
+      headers: { "Content-Type": "application/json", ...authHeaders() },
       body: JSON.stringify({ status }),
     });
 
