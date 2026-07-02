@@ -2,12 +2,15 @@
 
 import { revalidatePath } from "next/cache";
 import { BUYER_APP_URL, authHeaders, type OrderStatus } from "@/lib/buyer";
+import { requireAdmin } from "@/lib/auth";
 
 export async function updateOrderStatus(
   orderId: string,
   status: OrderStatus
 ): Promise<{ ok: boolean; error?: string }> {
   try {
+    await requireAdmin();
+
     const res = await fetch(`${BUYER_APP_URL}/api/admin/orders/${orderId}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json", ...authHeaders() },

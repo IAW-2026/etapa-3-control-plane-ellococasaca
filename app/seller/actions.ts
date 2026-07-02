@@ -1,14 +1,14 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { revalidatePath } from "next/cache";
 import { SELLER_APP_URL, authHeaders } from "@/lib/seller";
+import { requireAdmin } from "@/lib/auth";
 
 export async function deleteProduct(
   productId: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const { getToken } = await auth();
+    const { getToken } = await requireAdmin();
     const token = await getToken();
 
     const res = await fetch(`${SELLER_APP_URL}/api/admin/products/${productId}`, {
@@ -35,7 +35,7 @@ export async function deleteSeller(
   sellerId: string
 ): Promise<{ ok: boolean; error?: string }> {
   try {
-    const { getToken } = await auth();
+    const { getToken } = await requireAdmin();
     const token = await getToken();
 
     const res = await fetch(`${SELLER_APP_URL}/api/admin/sellers/${sellerId}`, {
