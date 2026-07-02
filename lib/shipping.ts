@@ -1,5 +1,9 @@
 export const SHIPPING_API_URL = process.env.SHIPPING_API_URL!;
 
+const interServiceHeaders = {
+  "x-inter-service-secret": process.env.INTER_SERVICE_SECRET ?? "",
+};
+
 export type ShipmentStatus =
   | "PENDING"
   | "PREPARING"
@@ -70,6 +74,7 @@ export const STATUS_DOT: Record<ShipmentStatus, string> = {
 async function fetchPage(page: number): Promise<ShipmentsResponse> {
   const res = await fetch(`${SHIPPING_API_URL}/api/shipments?page=${page}`, {
     cache: "no-store",
+    headers: interServiceHeaders,
   });
   if (!res.ok) {
     throw new Error(`La API de Shipping respondió ${res.status}`);
@@ -94,6 +99,7 @@ export async function fetchCouriers(): Promise<Courier[]> {
   try {
     const res = await fetch(`${SHIPPING_API_URL}/api/couriers`, {
       cache: "no-store",
+      headers: interServiceHeaders,
     });
     if (!res.ok) return [];
     const json = await res.json();
