@@ -39,7 +39,9 @@ export default async function middleware(req: NextRequest, event: NextFetchEvent
     }
     return response;
   }
-});
+
+  return clerk(req, event);
+}
 
 export const config = {
   matcher: [
